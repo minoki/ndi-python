@@ -86,35 +86,25 @@ struct VideoFrameV2Wrapper {
     inner.timestamp = timestamp;
     if (p_metadata) {
       metadata_str = p_metadata;
-      inner.p_metadata = metadata_str.c_str();
+      inner.p_metadata = p_metadata;
     }
   }
-  VideoFrameV2Wrapper(const VideoFrameV2Wrapper &o)
-      : metadata_str(o.metadata_str), data_array(o.data_array), inner(o.inner) {
-    inner.p_metadata = metadata_str.empty() ? nullptr : metadata_str.c_str();
-  }
+  VideoFrameV2Wrapper(const VideoFrameV2Wrapper &) = delete;
   VideoFrameV2Wrapper(VideoFrameV2Wrapper &&o) noexcept
       : metadata_str(std::move(o.metadata_str)),
         data_array(std::move(o.data_array)), inner(o.inner) {
-    inner.p_metadata = metadata_str.empty() ? nullptr : metadata_str.c_str();
+    o.inner.p_metadata = nullptr;
   }
-  VideoFrameV2Wrapper &operator=(const VideoFrameV2Wrapper &o) {
-    metadata_str = o.metadata_str;
-    data_array = o.data_array;
-    inner = o.inner;
-    inner.p_metadata = metadata_str.empty() ? nullptr : metadata_str.c_str();
-    return *this;
-  }
+  VideoFrameV2Wrapper &operator=(const VideoFrameV2Wrapper &o) = delete;
   VideoFrameV2Wrapper &operator=(VideoFrameV2Wrapper &&o) noexcept {
     metadata_str = std::move(o.metadata_str);
     data_array = std::move(o.data_array);
     inner = o.inner;
-    inner.p_metadata = metadata_str.empty() ? nullptr : metadata_str.c_str();
+    o.inner.p_metadata = nullptr;
     return *this;
   }
   void set_metadata(const std::string &s) {
     metadata_str = s;
-    inner.p_metadata = metadata_str.c_str();
   }
   void set_data(py::array_t<uint8_t> arr) {
     data_array = std::move(arr);
